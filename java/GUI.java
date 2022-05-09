@@ -1,3 +1,4 @@
+package com.company;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -72,7 +73,7 @@ class Frame extends JFrame implements ActionListener {
     }
 
     public void addRow(Student student, LocalTime t) {
-        String s = student.lastname + ", " + student.firstname;
+        String s = student.firstname + " " + student.lastname;
         if (student.lastname.equals("")) {
             s = student.tagID;
         }

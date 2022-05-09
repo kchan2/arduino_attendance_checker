@@ -1,3 +1,4 @@
+package com.company;
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
 import javax.activation.FileDataSource;
@@ -11,13 +12,13 @@ import java.util.Properties;
 
 public class Email {
     // Recipient's email ID
-    String to = "kchan2@oswego.edu";   // Change to your own email
+    String to = "wbowling@oswego.edu";   // Change to your own email
 
     // Sender's email ID
-    String from = "kchan2@oswego.edu";   // Change to your own email
+    String from = "wbowling@oswego.edu";   // Change to your own email
     // *** Have to change your email security setting to less secure
     String username = from;
-    String password = "YourPassword";   // Change to your own password
+    String password = "PASSWORD";   // Change to your own password
 
     public Email() {
     }

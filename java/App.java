@@ -1,3 +1,5 @@
+package com.company;
+
 import com.fazecast.jSerialComm.SerialPort;
 
 import javax.json.Json;
@@ -55,37 +57,40 @@ public class App extends Thread {
                 comPort.readBytes(readBuffer, readBuffer.length);
                 String read = new String(readBuffer);
                 LocalTime arrivalTime = LocalTime.now();
-                if (read.matches("^[a-z0-9_]+$")) {   // ID
+                ResultSet rs = null;
+                if (read.matches("^[A-Z0-9_]+$")) {   // ID
                     try (   // Get a connection
                             Connection connection = DriverManager.getConnection(url);
                             Statement stmt = connection.createStatement();
-                            ResultSet rs = stmt.executeQuery(QUERY_GET_COLUMNS);
                     ) {
+                        rs = stmt.executeQuery(QUERY_GET_COLUMNS);
                         while (rs.next()) {
                             // get column info
-                            String tagID = read;
+                            String tagID = read+"  ";
                             String studentID = "";
                             String last = "";
                             String first = "";
                             Student student = null;
-                            if (rs.getString("ID").equals(tagID)) {
-                                studentID = rs.getString("student ID");
-                                last = rs.getString("lastname");
-                                first = rs.getString("firstname");
+                            if (rs.getString("RFIDNumber").equals(tagID)) {
+                                studentID = rs.getString("StudentID");
+                                last = rs.getString("LastName");
+                                first = rs.getString("FirstName");
+                                System.out.println(studentID);
                                 student = new Student(read, studentID, last, first);
                                 if (arrivalTime.isAfter(classStart)) {
                                     // late
-                                    stmt.executeQuery(generateUpdateQuery("Late", read));
+                                    stmt.executeUpdate(generateUpdateQuery("Late", read));
                                 } else {
                                     // on time
-                                    stmt.executeQuery(generateUpdateQuery("Present", read));
+                                    stmt.executeUpdate(generateUpdateQuery("Present", read));
                                 }
+                                frame.addRow(student, arrivalTime);
                             }
-                            frame.addRow(student, arrivalTime);
                         }
-                    } catch (SQLException e) {
-                        e.printStackTrace();
+                    } catch (SQLException ignored) {
+
                     }
+
                 }
                 try {
                     Thread.sleep(500);
@@ -99,7 +104,7 @@ public class App extends Thread {
     }
 
     private String generateUpdateQuery(String status, String id) {
-        String QUERY_UPDATE = "Update RFIDCardsReferenceTable Set Status =" + status + " where RFIDNumber =" + id;
+        String QUERY_UPDATE = "Update RFIDCardsReferenceTable Set Status ='" + status + "' where RFIDNumber ='" + id+"'";
         return QUERY_UPDATE;
     }
 
@@ -112,7 +117,7 @@ public class App extends Thread {
         Statement stmt = connection.createStatement();
         ResultSet rs = stmt.executeQuery(QUERY_GET_COLUMNS);
         while (rs.next()) {
-            String studentID = rs.getString("student ID");
+            String studentID = rs.getString("StudentID");
             String first = rs.getString("FirstName");
             String last = rs.getString("LastName");
             String status = rs.getString("Status");
